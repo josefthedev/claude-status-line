@@ -2,13 +2,13 @@
 gsd_state_version: 1.0
 milestone: v1.0
 milestone_name: milestone
-status: Ready to plan
-last_updated: "2026-04-15T07:04:07.278Z"
+status: Executing Phase 03
+last_updated: "2026-04-15T19:43:00.000Z"
 progress:
   total_phases: 9
   completed_phases: 2
-  total_plans: 2
-  completed_plans: 2
+  total_plans: 3
+  completed_plans: 3
 ---
 
 # State — Python Statusline Rewrite
@@ -17,9 +17,9 @@ Phase: 3
 
 ## Current Focus
 
-Phase 1 complete. Next: Phase 02 (core data model).
+Phase 03 plan 03 complete. Next: Phase 04 (segments).
 
-Last session: 2026-04-15T07:02:51.100Z
+Last session: 2026-04-15T19:43:00Z
 
 ## Decisions Log
 
@@ -30,6 +30,8 @@ Last session: 2026-04-15T07:02:51.100Z
 - Safety: nothing in ~/.claude/ touched without explicit install.sh run
 - Installed ~/.claude/statusline.sh (635 lines) preserved — NOT overwritten by this plan
 - Added || true to unittest block in run.sh — exit code 5 (no tests) must not abort harness before graceful statusline.py skip
+- Config parser: LINE1/LINE2/LINE3 stay as strings (space-sep inside quotes); comma triggers list normalization
+- Config loading: base ~/.claude/statusline.conf merged with per-project .claude/statusline.conf (project wins)
 
 ## Blockers / Concerns
 
