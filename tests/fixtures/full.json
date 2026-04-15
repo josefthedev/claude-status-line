@@ -1,0 +1,25 @@
+{
+  "model": {"display_name": "Claude Opus 4.6", "id": "claude-opus-4-6"},
+  "context_window": {
+    "context_window_size": 200000,
+    "current_usage": {
+      "input_tokens": 64000,
+      "cache_creation_input_tokens": 0,
+      "cache_read_input_tokens": 128000
+    },
+    "total_input_tokens": 85000,
+    "total_output_tokens": 22000
+  },
+  "rate_limits": {
+    "five_hour": {
+      "used_percentage": 48.3,
+      "resets_at": 1776200000
+    },
+    "seven_day": {
+      "used_percentage": 12.1,
+      "resets_at": 1776700000
+    }
+  },
+  "cwd": "/home/josef/workspace-linux/claude-status-line",
+  "session_id": "test-session-002"
+}
