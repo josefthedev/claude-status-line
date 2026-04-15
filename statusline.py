@@ -67,12 +67,26 @@ def main():
         line_defs = [['model', 'context_pct', 'cwd', 'git_branch', 'git_status']]
 
     n_lines = len(line_defs)
-    budget = max(20, (width - 4) // n_lines)
+    # Proportional budgets: line 1 gets more (it's the densest).
+    # Total visible chars across all lines must stay ≤ terminal_width
+    # to avoid cli-truncate's multi-line bug (#37522).
+    total = max(40, width - (n_lines - 1))  # subtract newline chars
+    if n_lines == 1:
+        budgets = [total]
+    elif n_lines == 2:
+        budgets = [int(total * 0.55), total - int(total * 0.55)]
+    elif n_lines == 3:
+        b1 = int(total * 0.45)
+        b2 = int(total * 0.35)
+        budgets = [b1, b2, total - b1 - b2]
+    else:
+        per = total // n_lines
+        budgets = [per] * n_lines
 
     renderer = SegmentRenderer(data, config)
     sep_char = config.get('SEP_CHAR', '│')
 
-    lines = pack_lines(line_defs, renderer, budget, sep_char=sep_char)
+    lines = pack_lines(line_defs, renderer, budgets, sep_char=sep_char)
 
     # Apply dimColor compensation and output
     output = '\n'.join(NORMAL_INTENSITY + line for line in lines if line)
