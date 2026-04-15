@@ -2,13 +2,13 @@
 gsd_state_version: 1.0
 milestone: v1.0
 milestone_name: milestone
-status: Ready to plan
-last_updated: "2026-04-15T20:01:01.800Z"
+status: Phase 06 Complete
+last_updated: "2026-04-15T20:23:00Z"
 progress:
   total_phases: 9
-  completed_phases: 5
-  total_plans: 5
-  completed_plans: 5
+  completed_phases: 6
+  total_plans: 6
+  completed_plans: 6
 ---
 
 # State — Python Statusline Rewrite
@@ -17,9 +17,9 @@ Phase: 6
 
 ## Current Focus
 
-Phase 05 plan 05 complete. All phase 05 plans done — next: Phase 06.
+Phase 06 plan 06 complete. All phase 06 plans done — statusline.py wired and all integration tests passing.
 
-Last session: 2026-04-15T20:10:00Z
+Last session: 2026-04-15T20:23:00Z
 
 ## Decisions Log
 
@@ -33,6 +33,8 @@ Last session: 2026-04-15T20:10:00Z
 - Config parser: LINE1/LINE2/LINE3 stay as strings (space-sep inside quotes); comma triggers list normalization
 - Config loading: base ~/.claude/statusline.conf merged with per-project .claude/statusline.conf (project wins)
 - pack_lines(): greedy drop-not-truncate packer; git_status attaches to git_branch with space not separator
+- statusline.py: get_terminal_width() reads /dev/tty via ioctl; STATUSLINE_WIDTH env override for testing
+- budget = max(20, (width-4)//n_lines) prevents cli-truncate mangling multi-line output
 
 ## Blockers / Concerns
 
