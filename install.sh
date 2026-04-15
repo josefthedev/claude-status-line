@@ -14,7 +14,8 @@ dry() { echo "  [DRY-RUN] $1"; }
 
 # Verify source files exist
 for f in "$SCRIPT_DIR/statusline.py" "$SCRIPT_DIR/lib/__init__.py" "$SCRIPT_DIR/lib/ansi.py" \
-         "$SCRIPT_DIR/lib/config.py" "$SCRIPT_DIR/lib/segments.py" "$SCRIPT_DIR/lib/packer.py"; do
+         "$SCRIPT_DIR/lib/config.py" "$SCRIPT_DIR/lib/segments.py" "$SCRIPT_DIR/lib/packer.py" \
+         "$SCRIPT_DIR/tmux/statusline.sh"; do
     if [[ ! -f "$f" ]]; then
         echo "ERROR: Source file not found: $f" >&2
         exit 1
@@ -61,10 +62,25 @@ else
     log "copied lib/ → $DEST/statusline-lib/"
 fi
 
+# Copy tmux/ → tmux/
+if $DRY_RUN; then
+    dry "would copy tmux/ → $DEST/tmux/"
+else
+    mkdir -p "$DEST/tmux"
+    cp "$SCRIPT_DIR/tmux/statusline.sh" "$DEST/tmux/statusline.sh"
+    chmod +x "$DEST/tmux/statusline.sh"
+    log "copied tmux/ → $DEST/tmux/"
+fi
+
 echo ""
 echo "To activate, update ~/.claude/settings.json:"
 echo ""
 echo '  "statusline": { "command": "python3 ~/.claude/statusline.py" }'
+echo ""
+echo "For tmux integration, add to ~/.tmux.conf:"
+echo ""
+echo '  set -g status-right "#(~/.claude/tmux/statusline.sh)"'
+echo '  set -g status-interval 5'
 echo ""
 
 if $DRY_RUN; then
