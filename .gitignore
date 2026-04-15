@@ -1,0 +1,3 @@
+*.tmp
+*.bak
+.claude/settings.local.json
