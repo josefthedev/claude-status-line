@@ -1,11 +1,14 @@
 ---
+gsd_state_version: 1.0
 milestone: v1.0
-status: executing
-completed_phases: 0
-total_phases: 9
-completed_plans: 0
-total_plans: 9
-percent: 0
+milestone_name: milestone
+status: Phase 01 Complete — Ready for Phase 02
+last_updated: "2026-04-15T06:57:11.028Z"
+progress:
+  total_phases: 9
+  completed_phases: 1
+  total_plans: 1
+  completed_plans: 1
 ---
 
 # State — Python Statusline Rewrite
@@ -14,7 +17,9 @@ Phase: 1
 
 ## Current Focus
 
-Phase 1: Test Fixtures and Harness
+Phase 1 complete. Next: Phase 02 (core data model).
+
+Last session: 2026-04-15 — Executed 01-01-PLAN.md (test fixtures and harness)
 
 ## Decisions Log
 
@@ -24,6 +29,7 @@ Phase 1: Test Fixtures and Harness
 - Zero external dependencies: stdlib only
 - Safety: nothing in ~/.claude/ touched without explicit install.sh run
 - Installed ~/.claude/statusline.sh (635 lines) preserved — NOT overwritten by this plan
+- Added || true to unittest block in run.sh — exit code 5 (no tests) must not abort harness before graceful statusline.py skip
 
 ## Blockers / Concerns
 
