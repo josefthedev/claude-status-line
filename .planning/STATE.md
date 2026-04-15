@@ -2,13 +2,13 @@
 gsd_state_version: 1.0
 milestone: v1.0
 milestone_name: milestone
-status: Ready to plan
-last_updated: "2026-04-15T19:56:26.975Z"
+status: Executing Phase 05
+last_updated: "2026-04-15T20:10:00Z"
 progress:
   total_phases: 9
   completed_phases: 4
-  total_plans: 4
-  completed_plans: 4
+  total_plans: 5
+  completed_plans: 5
 ---
 
 # State — Python Statusline Rewrite
@@ -17,9 +17,9 @@ Phase: 5
 
 ## Current Focus
 
-Phase 03 plan 03 complete. Next: Phase 04 (segments).
+Phase 05 plan 05 complete. All phase 05 plans done — next: Phase 06.
 
-Last session: 2026-04-15T19:55:00.855Z
+Last session: 2026-04-15T20:10:00Z
 
 ## Decisions Log
 
@@ -32,6 +32,7 @@ Last session: 2026-04-15T19:55:00.855Z
 - Added || true to unittest block in run.sh — exit code 5 (no tests) must not abort harness before graceful statusline.py skip
 - Config parser: LINE1/LINE2/LINE3 stay as strings (space-sep inside quotes); comma triggers list normalization
 - Config loading: base ~/.claude/statusline.conf merged with per-project .claude/statusline.conf (project wins)
+- pack_lines(): greedy drop-not-truncate packer; git_status attaches to git_branch with space not separator
 
 ## Blockers / Concerns
 
