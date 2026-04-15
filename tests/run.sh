@@ -7,6 +7,8 @@ set -euo pipefail
 cd "$(dirname "$0")/.."
 
 STATUSLINE_PY="statusline.py"
+PASS=0
+FAIL=0
 
 echo "=== Python unit tests ==="
 python3 -m pytest tests/ -v 2>/dev/null || python3 -m unittest discover tests/ -v || true
@@ -18,20 +20,64 @@ if [[ ! -f "$STATUSLINE_PY" ]]; then
   exit 0
 fi
 
-echo "=== Integration: render minimal (120 cols) ==="
-cat tests/fixtures/minimal.json | STATUSLINE_WIDTH=120 python3 "$STATUSLINE_PY"
+run_test() {
+  local name="$1" width="$2" fixture="$3"
+  shift 3
+  local env_extra=("$@")
+
+  echo "--- $name ---"
+  local output
+  if output=$(env STATUSLINE_WIDTH="$width" "${env_extra[@]}" python3 "$STATUSLINE_PY" < "$fixture" 2>&1); then
+    if [[ -z "$output" ]]; then
+      echo "FAIL: empty output"
+      FAIL=$((FAIL + 1))
+      return
+    fi
+    # Verify dimColor compensation: each line starts with \033[22m
+    local bad_lines=0
+    while IFS= read -r line; do
+      if [[ "$line" != $'\033[22m'* ]]; then
+        bad_lines=$((bad_lines + 1))
+      fi
+    done <<< "$output"
+    if [[ "$bad_lines" -gt 0 ]]; then
+      echo "FAIL: $bad_lines line(s) missing dimColor compensation prefix"
+      FAIL=$((FAIL + 1))
+      return
+    fi
+    echo "$output"
+    echo "PASS"
+    PASS=$((PASS + 1))
+  else
+    echo "FAIL: non-zero exit code"
+    echo "$output"
+    FAIL=$((FAIL + 1))
+  fi
+  echo ""
+}
+
+echo "=== Integration tests ==="
 echo ""
 
-echo "=== Integration: render full (120 cols) ==="
-cat tests/fixtures/full.json | STATUSLINE_WIDTH=120 python3 "$STATUSLINE_PY"
+run_test "render minimal (120 cols)" 120 tests/fixtures/minimal.json
+run_test "render full (120 cols)" 120 tests/fixtures/full.json
+run_test "render narrow (40 cols)" 40 tests/fixtures/narrow.json
+run_test "2-line mode (160 cols)" 160 tests/fixtures/full.json STATUSLINE_LINES=2
+
+# Test graceful empty/bad input
+echo "--- graceful bad input ---"
+bad_output=$(echo "not json" | STATUSLINE_WIDTH=80 python3 "$STATUSLINE_PY" 2>&1) || true
+if [[ "$bad_output" == "Claude" ]]; then
+  echo "PASS: bad input returns 'Claude'"
+  PASS=$((PASS + 1))
+else
+  echo "FAIL: expected 'Claude', got '$bad_output'"
+  FAIL=$((FAIL + 1))
+fi
 echo ""
 
-echo "=== Integration: narrow (80 cols) ==="
-cat tests/fixtures/narrow.json | STATUSLINE_WIDTH=80 python3 "$STATUSLINE_PY"
-echo ""
-
-echo "=== Integration: 2-line mode (160 cols) ==="
-cat tests/fixtures/full.json | STATUSLINE_WIDTH=160 STATUSLINE_LINES=2 python3 "$STATUSLINE_PY"
-echo ""
-
+echo "=== Results: $PASS passed, $FAIL failed ==="
+if [[ "$FAIL" -gt 0 ]]; then
+  exit 1
+fi
 echo "All integration tests complete."
