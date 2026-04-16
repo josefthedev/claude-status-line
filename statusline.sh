@@ -508,6 +508,7 @@ render_segment() {
             printf "%b" "${dim}rule:${reset}${rule_color}${rule_count}${reset}"
             ;;
         session_timer)
+            # Elapsed time since this session started
             [ "${session_first_ts:-0}" -gt 0 ] 2>/dev/null || return
             local now elapsed_secs h m timer_str color
             now=$(date +%s)
@@ -525,6 +526,7 @@ render_segment() {
             printf "%b" "$(lbl session)${color}${timer_str}${reset}"
             ;;
         gsd_phase)
+            # GSD current phase + status from .planning/STATE.md
             [ -z "$gsd_phase_num" ] && return
             local status_str="" color
             color="$white"
@@ -537,6 +539,7 @@ render_segment() {
             printf "%b" "$(lbl phase)${color}${gsd_phase_num}${reset}${status_str}"
             ;;
         gsd_progress)
+            # GSD completed/total phases + plans from STATE.md
             [ -z "$gsd_completed_phases" ] && return
             local phases_str plans_str=""
             phases_str="${gsd_completed_phases}/${gsd_total_phases}"
@@ -546,14 +549,17 @@ render_segment() {
             printf "%b" "$(lbl gsd)${white}${phases_str}${dim}ph${reset}${plans_str}"
             ;;
         worktree)
+            # Show indicator when inside a linked git worktree
             [ -z "$worktree_name" ] && return
             printf "%b" "${dim}wt:${reset}${yellow}${worktree_name}${reset}"
             ;;
         plugins)
+            # Count of enabled MCP plugins from settings.json
             [ -z "$plugins_count" ] || [ "${plugins_count:-0}" -eq 0 ] 2>/dev/null && return
             printf "%b" "$(lbl plugins)${white}${plugins_count}${reset}"
             ;;
         agents)
+            # Active/completed subagents from agent-tracker hook
             [ -z "$session_id" ] && return
             local tracker_file="/tmp/claude-agent-tracker-${session_id}.json"
             [ -f "$tracker_file" ] || return
@@ -568,6 +574,7 @@ render_segment() {
             fi
             ;;
         *)
+            # Unknown segment — silently skip
             ;;
     esac
 }
@@ -579,6 +586,7 @@ build_line() {
     for seg in $segments; do
         rendered=$(render_segment "$seg")
         [ -z "$rendered" ] && { prev_seg="$seg"; continue; }
+        # git_status attaches directly to git_branch (space, no separator)
         if [ "$seg" = "git_status" ] && [ "$prev_seg" = "git_branch" ]; then
             line+=" ${rendered}"
         else
